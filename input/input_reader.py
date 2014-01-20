@@ -1,3 +1,8 @@
+from core.color import Color
+from core.features import Light, Material
+from core.geometry import Point, Vect
+from core.sphere import Sphere
+
 """
 Reads in a .txt scene file, and parses the data for the necessary components.
 
