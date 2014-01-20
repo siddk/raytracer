@@ -1,5 +1,17 @@
 import sys
+import math
+from inputs.input_reader import Scene
+from core.color import Color
+from core.features import *
+from core.geometry import *
+from core.sphere import *
 from struct import *
+
+"""
+Basic raytracer
+
+To run: python raytracer.py inputs/sample_input.txt output/output.tga
+"""
 
 def draw(outputFile, scene):
     """
@@ -134,7 +146,7 @@ def getPixel(x, y, scene):
                         isShadowed = True
                         break
                 
-                #If not, run lambert cosine to get diffusal
+                #If not, run lambert cosine to get diffusal coefficient
                 if not isShadowed:
                     lambert = (lightRay.getDir() * n) * coef
                     red += lambert * currentMaterial.getDiffuse().r * light.getIntensity().r
