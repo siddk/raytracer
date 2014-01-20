@@ -58,6 +58,12 @@ def sphereIntersect(ray, sphere, t):
 		returnValue = True
 	return returnValue, t
 
+def normal(p1, p2):
+	"""
+	Gets normal of two vectors
+	"""
+	return Vect(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z)
+
 def getPixel(x, y, scene):
 	"""
 	Performs the raytracing logic on a per pixel basis. Returns color of each pixel
