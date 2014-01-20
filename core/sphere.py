@@ -3,9 +3,9 @@ Sphere object (image for raytracing)
 """
 
 class Sphere (object):
-	"""
-	Sphere object with fields for position, size, and material
-	"""
+    """
+    Sphere object with fields for position, size, and material
+    """
 
     def setPosition(self, center):
         self.center = center
