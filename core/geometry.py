@@ -3,9 +3,9 @@ Contains all geometry objects for raytracer, i.e. Points, Vectors, Rays
 """
 
 class Point (object):
-	""" 
-	Single Point Object 
-	"""
+    """ 
+    Single Point Object 
+    """
 
     def __init__(self, x, y, z):
         self.x = x
@@ -19,9 +19,9 @@ class Point (object):
         return Vect(self.x - other.x, self.y - other.y, self.z - other.z)
 
 class Vect (object):
-	"""
-	Vector object, with addition and multiplication defined
-	"""
+    """
+    Vector object, with addition and multiplication defined
+    """
 
     def __init__(self, x, y, z):
         self.x = x
@@ -43,9 +43,9 @@ class Vect (object):
             return 0
 
 class Ray (object):
-	"""
-	Ray object, with start point and direction passed as parameters
-	"""
+    """
+    Ray object, with start point and direction passed as parameters
+    """
 
     def __init__(self, startPoint, dirVect):
         self.start = startPoint
