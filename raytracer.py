@@ -30,6 +30,34 @@ def draw(outputFile, scene):
 		pixelBuffer += pack('BBB', pixel.b, pixel.g, pixel.r)
 	output.write(pixelBuffer)
 
+def sphereIntersect(ray, sphere, t):
+	"""
+	Check if ray intersects sphere
+	"""
+
+	#Gets distance from ray and sphere
+	dist = sphere.getPosition() - ray.getStart()
+	
+	#Diagonal direction vector (direction * magnitude)
+	B = ray.getDir() * dist
+
+	#Check if ray hits sphere
+	D = B * B - dist * dist + sphere.getSize() * sphere.getSize()
+	if D < 0.0:
+		return False, t
+	
+	#Check if t is within .1 epsilon, return corresponding value
+	t0 = B - math.sqrt(D)
+	t1 = B + math.sqrt(D)
+	returnValue = False
+	if (t0 > 0.1) and (t0 < t):
+		t = t0
+		returnValue = True
+	if (t1 > 0.1) and (t1 < t):
+		t = t1
+		returnValue = True
+	return returnValue, t
+
 def getPixel(x, y, scene):
 	"""
 	Performs the raytracing logic on a per pixel basis. Returns color of each pixel
@@ -46,20 +74,26 @@ def getPixel(x, y, scene):
 	#Create Ray coming from behind point, with direction vector set to 1
 	view = Ray(Point(x, y, -1000),
 			   Vect(0.0, 0.0, 1.0))
-	
 
 	while True:
 		if coef > 0.0 and level < 10: 
+			
+			#Gets spheres in the scene
 			t = 2000.0
 			currentSphere = None
 			spheres = scene.getSpheres()
-			# determine if the ray hits any of the spheres in the scene
+			
+			#Determine if the ray hits any of the spheres in the scene
 			for sphere in spheres:
 				isIntersected, t = sphereIntersect(view, sphere, t)
 				if isIntersected:
 					currentSphere = sphere
+			
+			#If ray does not hit a sphere, color does not change, remains black
 			if currentSphere == None:
 				break
+			
+			#Get ray normal to sphere (bounce/refraction)
 			newStart = view.getStart() + view.getDir() * t
 			n = normal(newStart, currentSphere.getPosition())
 			temp = n * n
@@ -67,9 +101,13 @@ def getPixel(x, y, scene):
 				break
 			temp = 1.0 / math.sqrt(temp)
 			n = n * temp
+			
+			#Get sphere material to compute refraction/diffusal
 			currentMaterial = scene.getMaterialFromId(currentSphere.getMaterial())
 			if currentMaterial == None:
 				break
+			
+			#Get lights, to establish refraction angle
 			lights = scene.getLights()
 			for light in lights:
 				dist = normal(light.getPosition(), newStart)
@@ -78,18 +116,26 @@ def getPixel(x, y, scene):
 				a = math.sqrt(dist * dist)
 				if a <= 0.0:
 					continue
+				
+				#Create light ray
 				lightRay = Ray(newStart, dist * (1/a))
 				isShadowed = False
+				
+				#Check whether light ray intersects sphere, if it does, ignore it, shadowed
 				for sphere in spheres:
 					isIntersected, a = sphereIntersect(lightRay, sphere, a)
 					if isIntersected:
 						isShadowed = True
 						break
+				
+				#If not, run lambert cosine to get diffusal
 				if not isShadowed:
 					lambert = (lightRay.getDir() * n) * coef
 					red += lambert * currentMaterial.getDiffuse().r * light.getIntensity().r
 					green += lambert * currentMaterial.getDiffuse().g * light.getIntensity().g
 					blue += lambert * currentMaterial.getDiffuse().b * light.getIntensity().b
+			
+			#Update values for next level of bounce
 			coef = coef * currentMaterial.getReflection()
 			refl = 2.0 * (view.getDir() * n)
 			view.start = newStart
@@ -98,6 +144,8 @@ def getPixel(x, y, scene):
 			level += 1
 		else:
 			break
+	
+	#Return color object for pixel
 	return Color(min(red * 255, 255), min(green * 255, 255), min(blue * 255, 255)) 
 
 
