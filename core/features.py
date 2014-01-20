@@ -3,9 +3,9 @@ Features file containing objects for light source, and material
 """
 
 class Light (object):
-	"""
-	Light source object with fields for position and intensity
-	"""
+    """
+    Light source object with fields for position and intensity
+    """
 
     def setPosition(self, pos):
         self.position = pos
@@ -20,9 +20,9 @@ class Light (object):
         return self.intensity
 
 class Material (object):
-	"""
-	Material object with coefficients for diffusion rate, reflection, and identifier
-	"""
+    """
+    Material object with coefficients for diffusion rate, reflection, and identifier
+    """
 
     def setDiffuse(self, color):
         self.diffuse = color
